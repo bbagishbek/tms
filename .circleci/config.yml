@@ -5,9 +5,9 @@ jobs:
   build:
     docker:
       - image: cimg/base:stable # You can adjust the Node.js version as needed
-  working_directory: ~/app
-  
-  steps:
+    working_directory: ~/app
+
+    steps:
       - checkout
       - node/install:
           install-yarn: true
@@ -38,7 +38,7 @@ jobs:
       - run:
           name: Clone Selenium UI Tests Repository
           command: git clone https://github.com/bbagishbek/expero selenium-tests
-          
+
       - run:
           name: Run Selenium UI Tests
           command: |
@@ -54,3 +54,4 @@ workflows:
       - run_selenium_tests:
           requires:
             - build
+

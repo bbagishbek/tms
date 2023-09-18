@@ -25,3 +25,30 @@ jobs:
           name: Start Application
           command: npm start
 
+  run_selenium_tests:
+    docker:
+      - image: circleci/openjdk:8-jdk # Choose the appropriate Java version
+
+    working_directory: ~/app
+
+    steps:
+      - checkout
+
+      - run:
+          name: Clone Selenium UI Tests Repository
+          command: git clone https://github.com/bbagishbek/expero selenium-tests
+          
+      - run:
+          name: Run Selenium UI Tests
+          command: |
+            cd selenium-tests
+            mvn test -DsuiteXmlFile=testng.xml
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build
+      - run_selenium_tests:
+          requires:
+            - build

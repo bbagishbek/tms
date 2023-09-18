@@ -60,7 +60,6 @@ the bugs, just identify them.
 
 ℹ️ You don't need to change any application code, just be focused on designing the test plan and writing your tests.
 
-
 ## What is expected
 
 We expect this test to take 6-8 hours. You can choose the testing framework that is best to test these use cases.

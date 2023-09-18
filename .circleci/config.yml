@@ -1,0 +1,27 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/node:14 # You can adjust the Node.js version as needed
+
+    working_directory: ~/app
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+
+      - run:
+          name: Install Dependencies
+          command: npm install
+
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: Start Application
+          command: npm start
+

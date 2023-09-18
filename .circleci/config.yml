@@ -22,12 +22,12 @@ jobs:
             - node_modules
 
       - run:
-          name: Start Application
-          command: npm start
+          name: Build Application
+          command: npm run build
 
-  run_selenium_tests:
+  run_react_app:
     docker:
-      - image: circleci/openjdk:8-jdk # Choose the appropriate Java version
+      - image: circleci/node:14 # Use a compatible Node.js version
 
     working_directory: ~/app
 
@@ -35,20 +35,19 @@ jobs:
       - checkout
 
       - run:
-          name: Clone Selenium UI Tests Repository
-          command: git clone https://github.com/bbagishbek/expero selenium-tests
-          
+          name: Install Serve
+          command: npm install -g serve
+
       - run:
-          name: Run Selenium UI Tests
-          command: |
-            cd selenium-tests
-            mvn test -DsuiteXmlFile=testng.xml
+          name: Serve React Application
+          command: serve -s build
 
 workflows:
   version: 2
-  build-and-test:
+  build-and-run-react:
     jobs:
       - build
-      - run_selenium_tests:
+      - run_react_app:
           requires:
             - build
+

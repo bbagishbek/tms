@@ -1,33 +1,34 @@
 version: 2.1
+orbs:
+  node: circleci/node@5.1.0
 jobs:
   build:
     docker:
-      - image: circleci/node:18.12.1 # You can adjust the Node.js version as needed
-
-    working_directory: ~/app
-
-    steps:
+      - image: cimg/base:stable # You can adjust the Node.js version as needed
+  working_directory: ~/app
+  
+  steps:
       - checkout
-
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-
+      - node/install:
+          install-yarn: true
+          node-version: '18.12.1'
       - run:
           name: Install Dependencies
           command: npm install
 
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-
       - run:
           name: Build Application
           command: npm run build
+      - run:
+          name: Install Serve
+          command: npm install -g serve
+      - run:
+          name: Serve React Application
+          command: serve -s build
 
-  run_react_app:
+  run_selenium_tests:
     docker:
-      - image: circleci/node:14 # Use a compatible Node.js version
+      - image: circleci/openjdk:8-jdk # Choose the appropriate Java version
 
     working_directory: ~/app
 
@@ -35,19 +36,21 @@ jobs:
       - checkout
 
       - run:
-          name: Install Serve
-          command: npm install -g serve
-
+          name: Clone Selenium UI Tests Repository
+          command: git clone https://github.com/bbagishbek/expero selenium-tests
+          
       - run:
-          name: Serve React Application
-          command: serve -s build
+          name: Run Selenium UI Tests
+          command: |
+            cd selenium-tests
+            mvn install
+            mvn test -DsuiteXmlFile=testng.xml
 
 workflows:
   version: 2
   build-and-run-react:
     jobs:
       - build
-      - run_react_app:
+      - run_selenium_tests:
           requires:
             - build
-
